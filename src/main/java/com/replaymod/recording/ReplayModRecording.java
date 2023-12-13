@@ -21,7 +21,7 @@ public class ReplayModRecording implements Module {
 	private static final Logger LOGGER = LogManager.getLogger();
 	private static final AttributeKey<Void> ATTR_CHECKED = AttributeKey.newInstance("ReplayModRecording_checked");
 	public static ReplayModRecording instance;
-	private ReplayMod core;
+	private final ReplayMod core;
 	private ConnectionEventHandler connectionEventHandler;
 
 	public ReplayModRecording(ReplayMod mod) {
@@ -35,7 +35,7 @@ public class ReplayModRecording implements Module {
 			public void run() {
 				PacketListener packetListener = ReplayModRecording.this.connectionEventHandler.getPacketListener();
 				if (packetListener != null) {
-					packetListener.addMarker((String) null);
+					packetListener.addMarker(null);
 					ReplayModRecording.this.core.printInfoToChat("replaymod.chat.addedmarker");
 				}
 

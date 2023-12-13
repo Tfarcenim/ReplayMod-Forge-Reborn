@@ -62,7 +62,7 @@ public class ConnectionEventHandler {
 
 			ServerData serverInfo = mc.getCurrentServer();
 			String serverName = null;
-			boolean autoStart = (Boolean) this.core.getSettingsRegistry().get(Setting.AUTO_START_RECORDING);
+			boolean autoStart = this.core.getSettingsRegistry().get(Setting.AUTO_START_RECORDING);
 			String worldName;
 			if (local) {
 				worldName = mc.getSingleplayerServer().getWorldData().getLevelName();
@@ -76,7 +76,7 @@ public class ConnectionEventHandler {
 					return;
 				}
 				worldName = serverInfo.ip;
-				if (!I18n.get("selectServer.defaultName", new Object[0]).equals(serverInfo.name)) {
+				if (!I18n.get("selectServer.defaultName").equals(serverInfo.name)) {
 					serverName = serverInfo.name;
 				}
 

@@ -20,10 +20,9 @@ public class Mixin_AddIrisOdsShaderUniforms {
 	private static UniformHolder addReplayModOdsUniforms(UniformHolder uniforms) {
 		IrisODSFrameCapturer ods = IrisODSFrameCapturer.INSTANCE;
 		if (ods != null) {
-			UniformUpdateFrequency var10001 = UniformUpdateFrequency.PER_FRAME;
 			Objects.requireNonNull(ods);
+			UniformUpdateFrequency var10001 = UniformUpdateFrequency.PER_FRAME;
 			uniforms.uniform1b(var10001, "leftEye", ods::isLeftEye);
-			var10001 = UniformUpdateFrequency.PER_FRAME;
 			Objects.requireNonNull(ods);
 			uniforms.uniform1i(var10001, "direction", ods::getDirection);
 		}

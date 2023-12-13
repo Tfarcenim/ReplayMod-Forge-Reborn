@@ -196,7 +196,7 @@ dependencies {
 
     // FIXME this should be pulled in by ReplayStudio, and IntelliJ sees it, but javac for some reason does not
     implementation 'com.github.viaversion:opennbt:0a02214' // 2.0-SNAPSHOT (ViaVersion Edition)
-    implementation fg.deobf("curse.maven:oculus-581495:4763262")
+    compileOnly fg.deobf("curse.maven:oculus-581495:4763262")
 
     // implementation(jGui){ transitive = false } // FG 1.2 puts all MC deps into the compile configuration and we don't want to shade those
     testImplementation 'junit:junit:4.11'

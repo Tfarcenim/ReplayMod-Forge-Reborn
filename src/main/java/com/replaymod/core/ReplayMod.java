@@ -126,23 +126,19 @@ public class ReplayMod implements Module, Scheduler {
 	void initModules() {
 		this.modules.forEach(Module::initCommon);
 		this.modules.forEach(Module::initClient);
-		this.modules.forEach((m) -> {
-			m.registerKeyBindings(this.keyBindingRegistry);
-		});
+		this.modules.forEach((m) -> m.registerKeyBindings(this.keyBindingRegistry));
 	}
 
 	public void registerKeyBindings(KeyBindingRegistry registry) {
 		registry.registerKeyBinding("replaymod.input.settings", 0, () -> {
-			(new GuiReplaySettings((Screen) null, this.settingsRegistry)).display();
+			(new GuiReplaySettings(null, this.settingsRegistry)).display();
 		}, false);
 	}
 
 	public void initClient() {
 		this.backgroundProcesses.register();
 		this.keyBindingRegistry.register();
-		this.runPostStartup(() -> {
-			this.files.initialScan(this);
-		});
+		this.runPostStartup(() -> this.files.initialScan(this));
 	}
 
 	public void runSync(Runnable runnable) throws InterruptedException, ExecutionException, TimeoutException {
@@ -190,7 +186,7 @@ public class ReplayMod implements Module, Scheduler {
 	}
 
 	private void printToChat(boolean warning, String message, Object... args) {
-		if ((Boolean) this.getSettingsRegistry().get(Setting.NOTIFICATIONS)) {
+		if (this.getSettingsRegistry().get(Setting.NOTIFICATIONS)) {
 			Style coloredDarkGray = Style.EMPTY.withColor(ChatFormatting.DARK_GRAY);
 			Style coloredGold = Style.EMPTY.withColor(ChatFormatting.GOLD);
 			Style alert = Style.EMPTY.withColor(warning ? ChatFormatting.RED : ChatFormatting.DARK_GREEN);
