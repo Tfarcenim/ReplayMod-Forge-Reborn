@@ -11,13 +11,13 @@ import com.google.common.base.Preconditions;
 import com.replaymod.replay.Setting;
 
 public class CameraControllerRegistry {
-	private final Map<String, Function<CameraEntity, CameraController>> constructors = new ConcurrentHashMap();
+	private final Map<String, Function<CameraEntity, CameraController>> constructors = new ConcurrentHashMap<>();
 
 	public void register(String name, Function<CameraEntity, CameraController> constructor) {
 		Preconditions.checkState(!this.constructors.containsKey(name),
 				"Controller " + name + " is already registered.");
 		this.constructors.put(name, constructor);
-		Setting.CAMERA.setChoices(new ArrayList(this.getControllers()));
+		Setting.CAMERA.setChoices(new ArrayList<>(this.getControllers()));
 	}
 
 	public Set<String> getControllers() {
@@ -25,6 +25,6 @@ public class CameraControllerRegistry {
 	}
 
 	public CameraController create(String name, CameraEntity cameraEntity) {
-		return (CameraController) ((Function) this.constructors.get(name)).apply(cameraEntity);
+		return ( this.constructors.get(name)).apply(cameraEntity);
 	}
 }
