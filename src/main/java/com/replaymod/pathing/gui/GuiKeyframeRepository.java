@@ -32,7 +32,6 @@ import com.replaymod.lib.de.johni0702.minecraft.gui.function.Closeable;
 import com.replaymod.lib.de.johni0702.minecraft.gui.function.Typeable;
 import com.replaymod.lib.de.johni0702.minecraft.gui.layout.CustomLayout;
 import com.replaymod.lib.de.johni0702.minecraft.gui.layout.GridLayout;
-import com.replaymod.lib.de.johni0702.minecraft.gui.layout.LayoutData;
 import com.replaymod.lib.de.johni0702.minecraft.gui.layout.VerticalLayout;
 import com.replaymod.lib.de.johni0702.minecraft.gui.popup.GuiYesNoPopup;
 import com.replaymod.lib.de.johni0702.minecraft.gui.utils.Colors;
@@ -52,7 +51,6 @@ import com.replaymod.replaystudio.pathing.serialize.TimelineSerialization;
 import com.replaymod.replaystudio.replay.ReplayFile;
 
 import net.minecraft.CrashReport;
-import net.minecraft.client.gui.screens.Screen;
 
 public class GuiKeyframeRepository extends GuiScreen implements Closeable, Typeable {
 	private static final Logger LOGGER = LogManager.getLogger();
@@ -77,23 +75,21 @@ public class GuiKeyframeRepository extends GuiScreen implements Closeable, Typea
 
 	public GuiKeyframeRepository(PathingRegistry registry, ReplayFile replayFile, Timeline currentTimeline)
 			throws IOException {
-		this.contentPanel = (GuiPanel) (new GuiPanel(this)).setBackgroundColor(Colors.DARK_TRANSPARENT);
-		this.title = (GuiLabel) (new GuiLabel(this.contentPanel)).setI18nText("replaymod.gui.keyframerepository.title",
-				new Object[0]);
-		this.list = (GuiVerticalList) ((GuiVerticalList) (new GuiVerticalList(this.contentPanel)).setDrawShadow(true))
+		this.contentPanel = (new GuiPanel(this)).setBackgroundColor(Colors.DARK_TRANSPARENT);
+		this.title = (new GuiLabel(this.contentPanel)).setI18nText("replaymod.gui.keyframerepository.title"
+		);
+		this.list = (new GuiVerticalList(this.contentPanel)).setDrawShadow(true)
 				.setDrawSlider(true);
-		this.overwriteButton = (GuiButton) ((GuiButton) ((GuiButton) ((GuiButton) (new GuiButton())
+		this.overwriteButton = (new GuiButton())
 				.onClick(new Runnable() {
 					public void run() {
 						GuiYesNoPopup
 								.open(GuiKeyframeRepository.this,
-										((GuiLabel) (new GuiLabel()).setI18nText("replaymod.gui.keyframerepo.overwrite",
-												new Object[0])).setColor(Colors.BLACK))
+										(new GuiLabel()).setI18nText("replaymod.gui.keyframerepo.overwrite",
+												new Object[0]).setColor(Colors.BLACK))
 								.setYesI18nLabel("gui.yes").setNoI18nLabel("gui.no").onAccept(() -> {
-									Iterator var1 = GuiKeyframeRepository.this.selectedEntries.iterator();
 
-									while (var1.hasNext()) {
-										GuiKeyframeRepository.Entry entry = (GuiKeyframeRepository.Entry) var1.next();
+									for (Entry entry : GuiKeyframeRepository.this.selectedEntries) {
 										GuiKeyframeRepository.this.timelines.put(entry.name,
 												GuiKeyframeRepository.this.currentTimeline);
 									}
@@ -102,7 +98,7 @@ public class GuiKeyframeRepository extends GuiScreen implements Closeable, Typea
 									GuiKeyframeRepository.this.save();
 								});
 					}
-				})).setSize(75, 20)).setI18nLabel("replaymod.gui.overwrite", new Object[0])).setDisabled();
+				}).setSize(75, 20).setI18nLabel("replaymod.gui.overwrite", new Object[0]).setDisabled();
 		this.saveAsButton = new GuiButton().onClick(new Runnable() {
 			@Override
 			public void run() {
@@ -113,20 +109,12 @@ public class GuiKeyframeRepository extends GuiScreen implements Closeable, Typea
 						.setYesI18nLabel("replaymod.gui.save").setNoI18nLabel("replaymod.gui.cancel");
 				popup.getYesButton().setDisabled();
 				((VerticalLayout) popup.getInfo().getLayout()).setSpacing(7);
-				nameField.onEnter(new Runnable() {
-					@Override
-					public void run() {
-						if (popup.getYesButton().isEnabled()) {
-							popup.getYesButton().onClick();
-						}
+				nameField.onEnter(() -> {
+					if (popup.getYesButton().isEnabled()) {
+						popup.getYesButton().onClick();
 					}
-				}).onTextChanged(new Consumer<String>() {
-					@Override
-					public void consume(String obj) {
-						popup.getYesButton().setEnabled(
-								!nameField.getText().isEmpty() && !timelines.containsKey(nameField.getText()));
-					}
-				});
+				}).onTextChanged(obj -> popup.getYesButton().setEnabled(
+						!nameField.getText().isEmpty() && !timelines.containsKey(nameField.getText())));
 				popup.onAccept(() -> {
 					String name = nameField.getText();
 					timelines.put(name, currentTimeline);
@@ -135,18 +123,16 @@ public class GuiKeyframeRepository extends GuiScreen implements Closeable, Typea
 				});
 			}
 		}).setSize(75, 20).setI18nLabel("replaymod.gui.saveas");
-		this.loadButton = (GuiButton) ((GuiButton) ((GuiButton) ((GuiButton) (new GuiButton()).onClick(new Runnable() {
+		this.loadButton = (new GuiButton()).onClick(new Runnable() {
 			public void run() {
-				GuiKeyframeRepository.this.getMinecraft().setScreen((Screen) null);
+				GuiKeyframeRepository.this.getMinecraft().setScreen(null);
 
 				try {
-					Timeline timeline = (Timeline) GuiKeyframeRepository.this.timelines
-							.get(((GuiKeyframeRepository.Entry) GuiKeyframeRepository.this.selectedEntries.iterator()
-									.next()).name);
-					Iterator var2 = timeline.getPaths().iterator();
+					Timeline timeline = GuiKeyframeRepository.this.timelines
+							.get(GuiKeyframeRepository.this.selectedEntries.iterator()
+									.next().name);
 
-					while (var2.hasNext()) {
-						Path path = (Path) var2.next();
+					for (Path path : timeline.getPaths()) {
 						path.updateAll();
 					}
 
@@ -156,7 +142,7 @@ public class GuiKeyframeRepository extends GuiScreen implements Closeable, Typea
 				}
 
 			}
-		})).setSize(75, 20)).setI18nLabel("replaymod.gui.load", new Object[0])).setDisabled();
+		}).setSize(75, 20).setI18nLabel("replaymod.gui.load", new Object[0]).setDisabled();
 		this.renameButton = new GuiButton().onClick(new Runnable() {
 			@Override
 			public void run() {
@@ -192,19 +178,19 @@ public class GuiKeyframeRepository extends GuiScreen implements Closeable, Typea
 				});
 			}
 		}).setSize(75, 20).setI18nLabel("replaymod.gui.rename").setDisabled();
-		this.removeButton = (GuiButton) ((GuiButton) ((GuiButton) ((GuiButton) (new GuiButton())
+		this.removeButton = (new GuiButton())
 				.onClick(new Runnable() {
 					public void run() {
 						GuiYesNoPopup
 								.open(GuiKeyframeRepository.this,
-										((GuiLabel) (new GuiLabel()).setI18nText("replaymod.gui.keyframerepo.delete",
-												new Object[0])).setColor(Colors.BLACK))
+										(new GuiLabel()).setI18nText("replaymod.gui.keyframerepo.delete",
+												new Object[0]).setColor(Colors.BLACK))
 								.setYesI18nLabel("replaymod.gui.delete").setNoI18nLabel("replaymod.gui.cancel")
 								.onAccept(() -> {
 									Iterator var1 = GuiKeyframeRepository.this.selectedEntries.iterator();
 
 									while (var1.hasNext()) {
-										GuiKeyframeRepository.Entry entry = (GuiKeyframeRepository.Entry) var1.next();
+										Entry entry = (Entry) var1.next();
 										GuiKeyframeRepository.this.timelines.remove(entry.name);
 										GuiKeyframeRepository.this.list.getListPanel().removeElement(entry);
 									}
@@ -214,20 +200,20 @@ public class GuiKeyframeRepository extends GuiScreen implements Closeable, Typea
 									GuiKeyframeRepository.this.save();
 								});
 					}
-				})).setSize(75, 20)).setI18nLabel("replaymod.gui.remove", new Object[0])).setDisabled();
-		this.copyButton = (GuiButton) ((GuiButton) ((GuiButton) ((GuiButton) (new GuiButton()).onClick(new Runnable() {
+				}).setSize(75, 20).setI18nLabel("replaymod.gui.remove", new Object[0]).setDisabled();
+		this.copyButton = (new GuiButton()).onClick(new Runnable() {
 			public void run() {
 				Map<String, Timeline> toBeSerialized = new HashMap();
 				Iterator var2 = GuiKeyframeRepository.this.selectedEntries.iterator();
 
 				while (var2.hasNext()) {
-					GuiKeyframeRepository.Entry entry = (GuiKeyframeRepository.Entry) var2.next();
-					toBeSerialized.put(entry.name, (Timeline) GuiKeyframeRepository.this.timelines.get(entry.name));
+					Entry entry = (Entry) var2.next();
+					toBeSerialized.put(entry.name, GuiKeyframeRepository.this.timelines.get(entry.name));
 				}
 
 				try {
 					TimelineSerialization serialization = new TimelineSerialization(GuiKeyframeRepository.this.registry,
-							(ReplayFile) null);
+							null);
 					MCVer.setClipboardString(serialization.serialize(toBeSerialized));
 				} catch (Throwable var4) {
 					var4.printStackTrace();
@@ -237,25 +223,23 @@ public class GuiKeyframeRepository extends GuiScreen implements Closeable, Typea
 				}
 
 			}
-		})).setSize(75, 20)).setI18nLabel("replaymod.gui.copy", new Object[0])).setDisabled();
-		this.pasteButton = (GuiButton) ((GuiButton) ((GuiButton) (new GuiButton()).onClick(new Runnable() {
+		}).setSize(75, 20).setI18nLabel("replaymod.gui.copy", new Object[0]).setDisabled();
+		this.pasteButton = (new GuiButton()).onClick(new Runnable() {
 			public void run() {
 				try {
 					TimelineSerialization serialization = new TimelineSerialization(GuiKeyframeRepository.this.registry,
-							(ReplayFile) null);
-					Iterator var2 = serialization.deserialize(MCVer.getClipboardString()).entrySet().iterator();
+							null);
 
-					while (var2.hasNext()) {
-						java.util.Map.Entry<String, Timeline> entry = (java.util.Map.Entry) var2.next();
+					for (Map.Entry<String, Timeline> stringTimelineEntry : serialization.deserialize(MCVer.getClipboardString()).entrySet()) {
 
 						String name;
-						for (name = (String) entry.getKey(); GuiKeyframeRepository.this.timelines
+						for (name = stringTimelineEntry.getKey(); GuiKeyframeRepository.this.timelines
 								.containsKey(name); name = name + " (Copy)") {
 						}
 
-						GuiKeyframeRepository.this.timelines.put(name, (Timeline) entry.getValue());
-						GuiKeyframeRepository.this.list.getListPanel().addElements((LayoutData) null,
-								new GuiElement[] { GuiKeyframeRepository.this.new Entry(name) });
+						GuiKeyframeRepository.this.timelines.put(name, stringTimelineEntry.getValue());
+						GuiKeyframeRepository.this.list.getListPanel().addElements(null,
+								GuiKeyframeRepository.this.new Entry(name));
 					}
 
 					GuiKeyframeRepository.this.save();
@@ -264,7 +248,7 @@ public class GuiKeyframeRepository extends GuiScreen implements Closeable, Typea
 				}
 
 			}
-		})).setSize(75, 20)).setI18nLabel("replaymod.gui.paste", new Object[0]);
+		}).setSize(75, 20).setI18nLabel("replaymod.gui.paste");
 		this.addToQueueButton = new GuiButton().onClick(new Runnable() {
 			@Override
 			public void run() {
@@ -304,12 +288,12 @@ public class GuiKeyframeRepository extends GuiScreen implements Closeable, Typea
 				}.run();
 			}
 		}).setSize(75, 20).setI18nLabel("replaymod.gui.rendersettings.addtoqueue");
-		this.buttonPanel = (GuiPanel) ((GuiPanel) (new GuiPanel(this.contentPanel))
-				.setLayout((new GridLayout()).setColumns(4).setSpacingX(5).setSpacingY(5)))
-				.addElements((LayoutData) null,
-						new GuiElement[] { this.overwriteButton, this.saveAsButton, this.renameButton,
-								this.removeButton, this.loadButton, this.addToQueueButton, this.copyButton,
-								this.pasteButton });
+		this.buttonPanel = (new GuiPanel(this.contentPanel))
+				.setLayout((new GridLayout()).setColumns(4).setSpacingX(5).setSpacingY(5))
+				.addElements(null,
+						this.overwriteButton, this.saveAsButton, this.renameButton,
+						this.removeButton, this.loadButton, this.addToQueueButton, this.copyButton,
+						this.pasteButton);
 		this.timelines = new LinkedHashMap();
 		this.future = SettableFuture.create();
 		this.selectedEntries = new HashSet();
@@ -345,13 +329,12 @@ public class GuiKeyframeRepository extends GuiScreen implements Closeable, Typea
 		this.replayFile = replayFile;
 		this.currentTimeline = currentTimeline;
 		this.timelines.putAll(replayFile.getTimelines(registry));
-		Iterator var4 = this.timelines.entrySet().iterator();
 
-		while (var4.hasNext()) {
-			java.util.Map.Entry<String, Timeline> entry = (java.util.Map.Entry) var4.next();
-			if (!((String) entry.getKey()).isEmpty()) {
-				this.list.getListPanel().addElements((LayoutData) null,
-						new GuiElement[] { new GuiKeyframeRepository.Entry((String) entry.getKey()) });
+		for (Map.Entry<String, Timeline> stringTimelineEntry : this.timelines.entrySet()) {
+			Map.Entry<String, Timeline> entry = stringTimelineEntry;
+			if (!entry.getKey().isEmpty()) {
+				this.list.getListPanel().addElements(null,
+						new Entry(entry.getKey()));
 			}
 		}
 

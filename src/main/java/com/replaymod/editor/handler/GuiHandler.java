@@ -24,18 +24,17 @@ public class GuiHandler extends EventRegistrations {
 
 	public void injectIntoReplayViewer(Screen vanillaGuiScreen) {
 		AbstractGuiScreen guiScreen = GuiScreen.from(vanillaGuiScreen);
-		if (guiScreen instanceof GuiReplayViewer) {
-			GuiReplayViewer replayViewer = (GuiReplayViewer) guiScreen;
+		if (guiScreen instanceof GuiReplayViewer replayViewer) {
 			if (replayViewer.editorButton.getChildren().isEmpty()) {
 				replayViewer.replaySpecificButtons.add(
-						(GuiButton) ((GuiButton) ((GuiButton) ((GuiButton) (new GuiButton(replayViewer.editorButton))
+						(new GuiButton(replayViewer.editorButton))
 								.onClick(() -> {
 									if (!Utils.ifMinimalModeDoPopup(replayViewer, () -> {
 									})) {
 										try {
 											(new GuiEditReplay(replayViewer,
-													((GuiReplayViewer.GuiReplayEntry) replayViewer.list.getSelected()
-															.get(0)).file.toPath()) {
+													replayViewer.list.getSelected()
+															.get(0).file.toPath()) {
 												protected void close() {
 													super.close();
 													replayViewer.list.load();
@@ -48,7 +47,7 @@ public class GuiHandler extends EventRegistrations {
 										}
 
 									}
-								})).setSize(73, 20)).setI18nLabel("replaymod.gui.edit", new Object[0])).setDisabled());
+								}).setSize(73, 20).setI18nLabel("replaymod.gui.edit", new Object[0]).setDisabled());
 			}
 		}
 	}

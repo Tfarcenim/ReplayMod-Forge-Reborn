@@ -53,21 +53,21 @@ public class CameraProperties extends AbstractPropertyGroup {
 			handler.spectateCamera();
 			CameraEntity cameraEntity = handler.getCameraEntity();
 			if (cameraEntity != null) {
-				cameraEntity.setCameraPosition((Double) value.getLeft(), (Double) value.getMiddle(),
-						(Double) value.getRight());
+				cameraEntity.setCameraPosition(value.getLeft(), value.getMiddle(),
+						value.getRight());
 			}
 
 		}
 
 		public void toJson(JsonWriter writer, Triple<Double, Double, Double> value) throws IOException {
-			writer.beginArray().value((Number) value.getLeft()).value((Number) value.getMiddle())
-					.value((Number) value.getRight()).endArray();
+			writer.beginArray().value(value.getLeft()).value(value.getMiddle())
+					.value(value.getRight()).endArray();
 		}
 
 		public Triple<Double, Double, Double> fromJson(JsonReader reader) throws IOException {
 			reader.beginArray();
 
-			Triple var2;
+			Triple<Double,Double,Double> var2;
 			try {
 				var2 = Triple.of(reader.nextDouble(), reader.nextDouble(), reader.nextDouble());
 			} finally {
@@ -99,15 +99,15 @@ public class CameraProperties extends AbstractPropertyGroup {
 			handler.spectateCamera();
 			CameraEntity cameraEntity = handler.getCameraEntity();
 			if (cameraEntity != null) {
-				cameraEntity.setCameraRotation((Float) value.getLeft(), (Float) value.getMiddle(),
-						(Float) value.getRight());
+				cameraEntity.setCameraRotation(value.getLeft(), value.getMiddle(),
+						value.getRight());
 			}
 
 		}
 
 		public void toJson(JsonWriter writer, Triple<Float, Float, Float> value) throws IOException {
-			writer.beginArray().value((Number) value.getLeft()).value((Number) value.getMiddle())
-					.value((Number) value.getRight()).endArray();
+			writer.beginArray().value(value.getLeft()).value(value.getMiddle())
+					.value(value.getRight()).endArray();
 		}
 
 		public Triple<Float, Float, Float> fromJson(JsonReader reader) throws IOException {
