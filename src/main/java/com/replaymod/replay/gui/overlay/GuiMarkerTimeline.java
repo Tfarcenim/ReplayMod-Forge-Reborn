@@ -48,10 +48,10 @@ public class GuiMarkerTimeline extends AbstractGuiTimeline<GuiMarkerTimeline> im
 		this.replayHandler = replayHandler;
 
 		try {
-			this.markers = (Set) replayHandler.getReplayFile().getMarkers().or(HashSet::new);
+			this.markers = replayHandler.getReplayFile().getMarkers().or(HashSet::new);
 		} catch (IOException var3) {
 			ReplayModReplay.LOGGER.error("Failed to get markers from replay", var3);
-			this.markers = new HashSet();
+			this.markers = new HashSet<>();
 		}
 
 		this.saveMarkers = (markers) -> {
@@ -94,7 +94,7 @@ public class GuiMarkerTimeline extends AbstractGuiTimeline<GuiMarkerTimeline> im
 	protected void drawMarker(GuiRenderer renderer, ReadableDimension size, Marker marker) {
 		int visibleLength = (int) ((double) this.getLength() * this.getZoom());
 		int markerPos = Utils.clamp(marker.getTime(), this.getOffset(), this.getOffset() + visibleLength);
-		double positionInVisible = (double) (markerPos - this.getOffset());
+		double positionInVisible = markerPos - this.getOffset();
 		double fractionOfVisible = positionInVisible / (double) visibleLength;
 		int markerX = (int) (4.0D + fractionOfVisible * (double) (size.getWidth() - 4 - 4));
 		this.drawMarker(renderer, size, marker, markerX);
@@ -126,7 +126,7 @@ public class GuiMarkerTimeline extends AbstractGuiTimeline<GuiMarkerTimeline> im
 					&& mouseY <= this.lastSize.getHeight() - 3) {
 				int visibleLength = (int) ((double) this.getLength() * this.getZoom());
 				int contentWidth = this.lastSize.getWidth() - 4 - 4;
-				Iterator var6 = this.markers.iterator();
+				Iterator<Marker> var6 = this.markers.iterator();
 
 				Marker marker;
 				int markerX;
@@ -135,9 +135,9 @@ public class GuiMarkerTimeline extends AbstractGuiTimeline<GuiMarkerTimeline> im
 						return null;
 					}
 
-					marker = (Marker) var6.next();
+					marker = var6.next();
 					int markerPos = Utils.clamp(marker.getTime(), this.getOffset(), this.getOffset() + visibleLength);
-					double positionInVisible = (double) (markerPos - this.getOffset());
+					double positionInVisible = markerPos - this.getOffset();
 					double fractionOfVisible = positionInVisible / (double) visibleLength;
 					markerX = (int) (4.0D + fractionOfVisible * (double) contentWidth);
 				} while (Math.abs(markerX - mouseX) >= 3);
@@ -226,7 +226,7 @@ public class GuiMarkerTimeline extends AbstractGuiTimeline<GuiMarkerTimeline> im
 		Marker marker = this.getMarkerAt(renderInfo.mouseX, renderInfo.mouseY);
 		if (marker != null) {
 			return marker.getName() != null ? marker.getName()
-					: I18n.get("replaymod.gui.ingame.unnamedmarker", new Object[0]);
+					: I18n.get("replaymod.gui.ingame.unnamedmarker");
 		} else {
 			return super.getTooltipText(renderInfo);
 		}

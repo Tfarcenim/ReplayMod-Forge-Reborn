@@ -37,7 +37,7 @@ import net.minecraft.client.Minecraft;
 
 public class ReplayModReplay implements Module {
 	public static ReplayModReplay instance;
-	private ReplayMod core;
+	private final ReplayMod core;
 	public KeyBindingRegistry.Binding keyPlayPause;
 	private final CameraControllerRegistry cameraControllerRegistry;
 	public static Logger LOGGER = LogManager.getLogger();
@@ -131,14 +131,14 @@ public class ReplayModReplay implements Module {
 
 	public void initClient() {
 		this.cameraControllerRegistry.register("replaymod.camera.classic",
-				new Function<CameraEntity, CameraController>() {
+				new Function<>() {
 					@Nullable
 					public CameraController apply(CameraEntity cameraEntity) {
 						return new ClassicCameraController(cameraEntity);
 					}
 				});
 		this.cameraControllerRegistry.register("replaymod.camera.vanilla",
-				new Function<CameraEntity, CameraController>() {
+				new Function<>() {
 					@Nullable
 					public CameraController apply(@Nullable CameraEntity cameraEntity) {
 						return new VanillaCameraController(ReplayModReplay.this.core.getMinecraft(), cameraEntity);
@@ -203,7 +203,7 @@ public class ReplayModReplay implements Module {
 	}
 
 	public CameraController createCameraController(CameraEntity cameraEntity) {
-		String controllerName = (String) this.core.getSettingsRegistry().get(Setting.CAMERA);
+		String controllerName = this.core.getSettingsRegistry().get(Setting.CAMERA);
 		return this.cameraControllerRegistry.create(controllerName, cameraEntity);
 	}
 }

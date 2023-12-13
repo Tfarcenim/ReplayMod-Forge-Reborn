@@ -331,10 +331,9 @@ public class GuiKeyframeRepository extends GuiScreen implements Closeable, Typea
 		this.timelines.putAll(replayFile.getTimelines(registry));
 
 		for (Map.Entry<String, Timeline> stringTimelineEntry : this.timelines.entrySet()) {
-			Map.Entry<String, Timeline> entry = stringTimelineEntry;
-			if (!entry.getKey().isEmpty()) {
+			if (!stringTimelineEntry.getKey().isEmpty()) {
 				this.list.getListPanel().addElements(null,
-						new Entry(entry.getKey()));
+						new Entry(stringTimelineEntry.getKey()));
 			}
 		}
 
@@ -380,12 +379,10 @@ public class GuiKeyframeRepository extends GuiScreen implements Closeable, Typea
 			switch (keyCode) {
 			case 65:
 				if (this.selectedEntries.size() < this.timelines.size()) {
-					Iterator var6 = this.list.getListPanel().getChildren().iterator();
 
-					while (var6.hasNext()) {
-						GuiElement<?> child = (GuiElement) var6.next();
-						if (child instanceof GuiKeyframeRepository.Entry) {
-							this.selectedEntries.add((GuiKeyframeRepository.Entry) child);
+					for (GuiElement<?> child : this.list.getListPanel().getChildren()) {
+						if (child instanceof Entry) {
+							this.selectedEntries.add((Entry) child);
 						}
 					}
 				} else {
