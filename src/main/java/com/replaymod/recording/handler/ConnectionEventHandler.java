@@ -28,7 +28,7 @@ import net.minecraft.world.level.Level;
 
 public class ConnectionEventHandler {
 	private static final String DATE_FORMAT = "yyyy_MM_dd_HH_mm_ss";
-	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
+	private static final SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
 	private static final Minecraft mc = MCVer.getMinecraft();
 	private final Logger logger;
 	private final ReplayMod core;
