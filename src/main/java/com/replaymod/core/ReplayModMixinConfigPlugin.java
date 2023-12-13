@@ -35,7 +35,7 @@ public class ReplayModMixinConfigPlugin implements IMixinConfigPlugin {
 		} else if (mixinClassName.endsWith("_NoOF")) {
 			return !this.hasOF;
 		} else {
-			return mixinClassName.endsWith("_Iris") ? this.hasIris : true;
+			return !mixinClassName.endsWith("_Iris") || this.hasIris;
 		}
 	}
 

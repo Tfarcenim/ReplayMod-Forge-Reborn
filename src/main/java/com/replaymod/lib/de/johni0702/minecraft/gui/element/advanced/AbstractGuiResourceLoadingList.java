@@ -34,15 +34,15 @@ public abstract class AbstractGuiResourceLoadingList<T extends AbstractGuiResour
 		extends AbstractGuiVerticalList<T> implements Tickable, Loadable, Closeable, Typeable {
 	private static final String[] LOADING_TEXT = new String[] { "Ooo", "oOo", "ooO", "oOo" };
 	private final GuiLabel loadingElement = new GuiLabel();
-	private final GuiPanel resourcesPanel = (GuiPanel) (new GuiPanel(this.getListPanel()))
+	private final GuiPanel resourcesPanel = new GuiPanel(this.getListPanel())
 			.setLayout(new VerticalLayout());
-	private final Queue<Runnable> resourcesQueue = new ConcurrentLinkedQueue();
+	private final Queue<Runnable> resourcesQueue = new ConcurrentLinkedQueue<>();
 	private Consumer<Consumer<Supplier<U>>> onLoad;
 	private Runnable onSelectionChanged;
 	private Runnable onSelectionDoubleClicked;
 	private Thread loaderThread;
 	private int tick;
-	private final List<AbstractGuiResourceLoadingList<T, U>.Element> selected = new ArrayList();
+	private final List<AbstractGuiResourceLoadingList<T, U>.Element> selected = new ArrayList<>();
 	private long selectedLastClickTime;
 
 	public AbstractGuiResourceLoadingList() {
@@ -56,7 +56,7 @@ public abstract class AbstractGuiResourceLoadingList<T extends AbstractGuiResour
 		this.loadingElement.setText(LOADING_TEXT[this.tick++ / 5 % LOADING_TEXT.length]);
 
 		Runnable resource;
-		while ((resource = (Runnable) this.resourcesQueue.poll()) != null) {
+		while ((resource = this.resourcesQueue.poll()) != null) {
 			resource.run();
 		}
 
@@ -148,12 +148,10 @@ public abstract class AbstractGuiResourceLoadingList<T extends AbstractGuiResour
 	}
 
 	public List<U> getSelected() {
-		List<U> selectedResources = new ArrayList(this.selected.size());
-		Iterator var2 = this.selected.iterator();
+		List<U> selectedResources = new ArrayList<>(this.selected.size());
 
-		while (var2.hasNext()) {
-			AbstractGuiResourceLoadingList<T, U>.Element element = (AbstractGuiResourceLoadingList.Element) var2.next();
-			selectedResources.add(element.resource);
+		for (Element value : this.selected) {
+			selectedResources.add(value.resource);
 		}
 
 		return selectedResources;
@@ -162,13 +160,11 @@ public abstract class AbstractGuiResourceLoadingList<T extends AbstractGuiResour
 	public boolean typeKey(ReadablePoint mousePosition, int keyCode, char keyChar, boolean ctrlDown,
 			boolean shiftDown) {
 		if (Screen.hasControlDown() && keyCode == 65) {
-			List<AbstractGuiResourceLoadingList<T, U>.Element> all = new ArrayList();
-			Iterator var7 = this.getListPanel().getChildren().iterator();
+			List<AbstractGuiResourceLoadingList<T, U>.Element> all = new ArrayList<>();
 
-			while (var7.hasNext()) {
-				GuiElement<?> child = (GuiElement) var7.next();
+			for (GuiElement<?> child : this.getListPanel().getChildren()) {
 				if (child instanceof AbstractGuiResourceLoadingList.Element) {
-					all.add((AbstractGuiResourceLoadingList.Element) child);
+					all.add((Element) child);
 				}
 			}
 
@@ -251,7 +247,7 @@ public abstract class AbstractGuiResourceLoadingList<T extends AbstractGuiResour
 		}
 
 		public int compareTo(AbstractGuiResourceLoadingList<T, U>.Element o) {
-			return ((Comparable) this.resource).compareTo(o.resource);
+			return this.resource.compareTo(o.resource);
 		}
 	}
 }

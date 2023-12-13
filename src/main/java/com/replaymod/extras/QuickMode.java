@@ -15,7 +15,7 @@ public class QuickMode extends EventRegistrations implements Extra {
 	private final GuiImage indicator;
 
 	public QuickMode() {
-		this.indicator = (GuiImage) ((GuiImage) (new GuiImage()).setTexture(ReplayMod.TEXTURE, 40, 100, 16, 16))
+		this.indicator = new GuiImage().setTexture(ReplayMod.TEXTURE, 40, 100, 16, 16)
 				.setSize(16, 16);
 		this.on(ReplayOpenedCallback.EVENT, (replayHandler) -> {
 			this.updateIndicator(replayHandler.getOverlay(), replayHandler.isQuickMode());
@@ -44,7 +44,7 @@ public class QuickMode extends EventRegistrations implements Extra {
 	private void updateIndicator(GuiReplayOverlay overlay, boolean enabled) {
 		if (enabled) {
 			overlay.statusIndicatorPanel.addElements(new HorizontalLayout.Data(1.0D),
-					new GuiElement[] { this.indicator });
+					this.indicator);
 		} else {
 			overlay.statusIndicatorPanel.removeElement(this.indicator);
 		}

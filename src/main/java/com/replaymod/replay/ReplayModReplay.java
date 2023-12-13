@@ -146,7 +146,7 @@ public class ReplayModReplay implements Module {
 				});
 		MinecraftAccessor mc = (MinecraftAccessor) this.core.getMinecraft();
 		mc.setTimer(new InputReplayTimer(mc.getTimer(), this));
-		(new GuiHandler(this)).register();
+		new GuiHandler(this).register();
 	}
 
 	public void startReplay(File file) throws IOException {

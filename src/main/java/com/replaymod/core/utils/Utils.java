@@ -67,7 +67,7 @@ import net.minecraft.CrashReport;
 import net.minecraft.client.gui.screens.Screen;
 
 public class Utils {
-	private static Logger LOGGER = LogManager.getLogger();
+	private static final Logger LOGGER = LogManager.getLogger();
 	public static final Image DEFAULT_THUMBNAIL;
 	public static final SSLContext SSL_CONTEXT;
 	public static final SSLSocketFactory SSL_SOCKET_FACTORY;
@@ -128,7 +128,7 @@ public class Utils {
 				return false;
 			}
 
-			if (Files.exists(path, new LinkOption[0])) {
+			if (Files.exists(path)) {
 				return true;
 			} else {
 				try {
@@ -176,11 +176,9 @@ public class Utils {
 		String baseName = FilenameUtils.getBaseName(fileName);
 
 		try {
-			return URLDecoder.decode(baseName, Charsets.UTF_8.name());
+			return URLDecoder.decode(baseName, Charsets.UTF_8);
 		} catch (IllegalArgumentException var3) {
 			return baseName;
-		} catch (UnsupportedEncodingException var4) {
-			throw Throwables.propagate(var4);
 		}
 	}
 
@@ -280,7 +278,7 @@ public class Utils {
 	}
 
 	public static Path ensureDirectoryExists(Path path) throws IOException {
-		return Files.createDirectories(Files.exists(path, new LinkOption[0]) ? path.toRealPath() : path);
+		return Files.createDirectories(Files.exists(path) ? path.toRealPath() : path);
 	}
 
 	static {
@@ -300,13 +298,13 @@ public class Utils {
 			try {
 				Certificate certificate = CertificateFactory.getInstance("X.509").generateCertificate(in);
 				KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-				keyStore.load((InputStream) null, (char[]) null);
+				keyStore.load(null, null);
 				keyStore.setCertificateEntry("1", certificate);
 				TrustManagerFactory trustManagerFactory = TrustManagerFactory
 						.getInstance(TrustManagerFactory.getDefaultAlgorithm());
 				trustManagerFactory.init(keyStore);
 				SSLContext ctx = SSLContext.getInstance("TLS");
-				ctx.init((KeyManager[]) null, trustManagerFactory.getTrustManagers(), (SecureRandom) null);
+				ctx.init(null, trustManagerFactory.getTrustManagers(), null);
 				SSL_CONTEXT = ctx;
 				SSL_SOCKET_FACTORY = ctx.getSocketFactory();
 			} catch (Throwable var7) {
@@ -339,30 +337,28 @@ public class Utils {
 			super(container);
 			this.setBackgroundColor(Colors.DARK_TRANSPARENT);
 			this.getInfo().addElements(new VerticalLayout.Data(0.5D),
-					new GuiElement[] {
-							((GuiLabel) (new GuiLabel()).setColor(Colors.BLACK))
-									.setI18nText("replaymod.gui.unknownerror", new Object[0]),
-							this.scrollable = (GuiScrollable) ((GuiScrollable) ((GuiScrollable) (new GuiScrollable())
-									.setScrollDirection(AbstractGuiScrollable.Direction.VERTICAL))
-									.setLayout((new VerticalLayout()).setSpacing(2)))
-									.addElements((LayoutData) null, (GuiElement[]) Arrays
-											.stream(crashReport.replace("\t", "    ").split("\n")).map((l) -> {
-												return (GuiLabel) ((GuiLabel) (new GuiLabel()).setText(l))
-														.setColor(Colors.BLACK);
-											}).toArray((x$0) -> {
-												return new GuiElement[x$0];
-											})) });
-			GuiButton copyToClipboardButton = (GuiButton) ((GuiButton) ((GuiButton) (new GuiButton())
-					.setI18nLabel("chat.copy", new Object[0])).onClick(() -> {
+					(new GuiLabel()).setColor(Colors.BLACK)
+							.setI18nText("replaymod.gui.unknownerror"),
+					this.scrollable = (new GuiScrollable())
+							.setScrollDirection(AbstractGuiScrollable.Direction.VERTICAL)
+							.setLayout((new VerticalLayout()).setSpacing(2))
+							.addElements(null, Arrays
+									.stream(crashReport.replace("\t", "    ").split("\n")).map((l) -> {
+										return (new GuiLabel()).setText(l)
+												.setColor(Colors.BLACK);
+									}).toArray((x$0) -> {
+										return new GuiElement[x$0];
+									})));
+			GuiButton copyToClipboardButton = (new GuiButton())
+					.setI18nLabel("chat.copy", new Object[0]).onClick(() -> {
 						com.replaymod.lib.de.johni0702.minecraft.gui.versions.MCVer.setClipboardString(crashReport);
-					})).setSize(150, 20);
+					}).setSize(150, 20);
 			GuiButton closeButton = this.getCloseButton();
 			this.popup.removeElement(closeButton);
 			this.popup.addElements(new VerticalLayout.Data(1.0D),
-					new GuiElement[] {
-							((GuiPanel) ((GuiPanel) (new GuiPanel()).setLayout((new HorizontalLayout()).setSpacing(5)))
-									.setSize(305, 20)).addElements((LayoutData) null,
-											new GuiElement[] { copyToClipboardButton, closeButton }) });
+					(new GuiPanel()).setLayout((new HorizontalLayout()).setSpacing(5))
+							.setSize(305, 20).addElements(null,
+							copyToClipboardButton, closeButton));
 			this.open();
 		}
 
@@ -376,15 +372,14 @@ public class Utils {
 		private MinimalModeUnsupportedPopup(GuiContainer container) {
 			super(container);
 			this.setBackgroundColor(Colors.DARK_TRANSPARENT);
-			ProtocolVersion latestVersion = (ProtocolVersion) ProtocolVersion.getProtocols().stream()
+			ProtocolVersion latestVersion = ProtocolVersion.getProtocols().stream()
 					.max(Comparator.comparing(ProtocolVersion::getVersion)).orElseThrow(RuntimeException::new);
 			this.getInfo().addElements(new VerticalLayout.Data(0.5D),
-					new GuiElement[] {
-							((GuiLabel) (new GuiLabel()).setColor(Colors.BLACK))
-									.setI18nText("replaymod.gui.minimalmode.unsupported", new Object[0]),
-							((GuiLabel) (new GuiLabel()).setColor(Colors.BLACK)).setI18nText(
-									"replaymod.gui.minimalmode.supportedversion",
-									new Object[] { "1.7.10 - " + latestVersion.getName() }) });
+					(new GuiLabel()).setColor(Colors.BLACK)
+							.setI18nText("replaymod.gui.minimalmode.unsupported"),
+					(new GuiLabel()).setColor(Colors.BLACK).setI18nText(
+							"replaymod.gui.minimalmode.supportedversion",
+							"1.7.10 - " + latestVersion.getName()));
 			this.open();
 		}
 	}

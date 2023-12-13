@@ -5,21 +5,24 @@ import java.util.Iterator;
 import com.replaymod.lib.de.johni0702.minecraft.gui.utils.Event;
 
 public interface KeyEventCallback {
-	Event<KeyEventCallback> EVENT = Event.create((listeners) -> {
-		return (key, scanCode, action, modifiers) -> {
-			Iterator var5 = listeners.iterator();
+	Event<KeyEventCallback> EVENT = Event.create((listeners) -> (key, scanCode, action, modifiers) -> {
+		Iterator<KeyEventCallback> var5 = listeners.iterator();
 
-			KeyEventCallback listener;
-			do {
-				if (!var5.hasNext()) {
-					return false;
-				}
+		KeyEventCallback listener;
+		if (!var5.hasNext()) {
+			return false;
+		}
 
-				listener = (KeyEventCallback) var5.next();
-			} while (!listener.onKeyEvent(key, scanCode, action, modifiers));
+		listener = var5.next();
+		while (!listener.onKeyEvent(key, scanCode, action, modifiers)) {
+			if (!var5.hasNext()) {
+				return false;
+			}
 
-			return true;
-		};
+			listener = var5.next();
+		}
+
+		return true;
 	});
 	int ACTION_RELEASE = 0;
 	int ACTION_PRESS = 1;
